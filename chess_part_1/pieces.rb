@@ -1,8 +1,3 @@
-
-
-
-require "byebug"
-
 require_relative "piece"
 require_relative "null_piece"
 require_relative "bishop"
@@ -12,7 +7,9 @@ require_relative "pawn"
 require_relative "queen"
 require_relative "rook"
 
-class Board
+class Pieces
+
+    attr_accessor :ALL_PIECES
 
     ALL_PIECES = {
         :rook_1 =>[Rook.new(:black, self, [0,0])],
@@ -48,57 +45,3 @@ class Board
         :pawn_15 => [Pawn.new(:white, self [6,6])]
         :pawn_16 => [Pawn.new(:white, self [6,7])]
 }
-
-    attr_accessor :rows
-
-    def initialize
-        @rows = Array.new(8){Array.new(8){NullPiece.new}}
-        place_pieces
-    end
-    
-    def [](pos)
-        row, col = pos
-        @rows[row][col]
-    end
-
-    def []=(pos, piece)
-        row, col = pos
-        @rows[row][col] = piece
-    end
-
-    def move_piece(start_pos, end_pos)
-        raise "no piece at starting position" if empty?(start_pos)
-        raise "must move to valid end position" unless valid_spot?(end_pos)
-        self[start_pos], self[end_pos] = self[end_pos], self[start_pos]
-        self[end_pos].pos=end_pos
-        
-    end
-
-    def valid_spot?(pos)
-        empty?(pos) && on_board?(pos)
-    end
-
-    def empty?(pos)
-        self[pos].token == :np
-    end
-
-    def on_board?(pos)
-        pos.all? {|index| index.between?(0, 8)}
-    end
-
-
-    def place_pieces
-        (0...@rows.length).each do | i|
-            (0...@rows.length).each do | j|
-                if i < 2 || i > 5
-                    piece = Piece.new(:black, self, [i,j])
-                    @rows[i][j]=(piece)
-                else
-                    @rows[i][j]=(NullPiece.new) 
-                end
-            end
-        end
-        @rows
-    end
-end
-
